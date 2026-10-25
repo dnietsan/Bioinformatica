@@ -1,0 +1,251 @@
+> # UNA MUESTRA T-TEST
+> set.seed(100)
+> x<-rnorm(50,mean=10,sd=0.5)
+> t.test(x,mu=10)
+
+        One Sample t-test
+
+data:  x
+t = 0.70372, df = 49, p-value = 0.4849
+alternative hypothesis: true mean is not equal to 10
+95 percent confidence interval:
+  9.924374 10.157135
+sample estimates:
+mean of x 
+ 10.04075 
+
+> 
+> # UNA MUESTRA WILCOXON TEST
+> numeric_vector<-c(20,29,24,19,20,22,28,23,19,19)
+> wilcox.test(numeric_vector,mu=20,conf.int=TRUE)
+
+        Wilcoxon signed rank exact test
+
+data:  numeric_vector
+V = 40, p-value = 0.1719
+alternative hypothesis: true location is not equal to 20
+95.9 percent confidence interval:
+ 19.5 25.0
+sample estimates:
+(pseudo)median 
+          21.5 
+
+> 
+> # DOS MUESTRAS T-TEST y WILCOX
+> x <- c(0.80, 0.83, 1.89, 1.04, 1.45, 1.38, 1.91, 1.64, 0.73, 1.46)
+> mean(x)
+[1] 1.313
+> y <- c(1.15, 0.88, 0.90, 0.74, 1.21)
+> mean(y)
+[1] 0.976
+> wilcox.test(x,y,alternative="g")
+
+        Wilcoxon rank sum exact test
+
+data:  x and y
+W = 35, p-value = 0.1272
+alternative hypothesis: true location shift is greater than 0
+
+> # Por defecto R asume que no son pareados (son independientes) y que las varianzas son diferentes
+> t.test(x,y,var.equal=TRUE)
+
+        Two Sample t-test
+
+data:  x and y
+t = 1.6061, df = 13, p-value = 0.1323
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.1162891  0.7902891
+sample estimates:
+mean of x mean of y 
+    1.313     0.976 
+
+> 
+> # TRES O MÁS MUESTRAS
+> #ANOVA
+> datos_anova <- read.table("anova-datos.txt",sep=" ",header=TRUE)
+> anova <- aov(Vigilancia~Dosis,datos_anova)
+> summary(anova)
+            Df Sum Sq Mean Sq F value  Pr(>F)   
+Dosis        2  426.2  213.12   8.789 0.00298 **
+Residuals   15  363.8   24.25                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> 
+> #Kruskal-Wallis
+> datos <- data.frame(
++   condicion = c(rep("condicion1", 18), rep("condicion2", 18), rep("condicion3", 18)),
++   n_huevos = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 27, 28, 29, 30, 51, 52, 53, 342, 40,
++                41, 42, 43, 44, 45, 46, 47, 48, 67, 88, 89, 90, 91,92, 93, 94, 293,
++                19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 25, 36, 37, 58, 59, 60, 71, 72)
++ )
+> head(datos)
+   condicion n_huevos
+1 condicion1        1
+2 condicion1        2
+3 condicion1        3
+4 condicion1        4
+5 condicion1        5
+6 condicion1        6
+> aggregate(n_huevos ~ condicion, data = datos, FUN = median)
+   condicion n_huevos
+1 condicion1     12.5
+2 condicion2     57.5
+3 condicion3     26.5
+> aggregate(n_huevos ~ condicion, data = datos, FUN = sd)
+   condicion n_huevos
+1 condicion1 78.10637
+2 condicion2 58.41750
+3 condicion3 18.59097
+> kruskal.test(n_huevos ~ condicion, data = datos)
+
+        Kruskal-Wallis rank sum test
+
+data:  n_huevos by condicion
+Kruskal-Wallis chi-squared = 19.964, df = 2, p-value = 4.623e-05
+
+> 
+> # SHAPIRO TEST
+> shapiro.test(numeric_vector)
+
+        Shapiro-Wilk normality test
+
+data:  numeric_vector
+W = 0.84135, p-value = 0.04579
+
+> # ¿Qué test sería el más correcto según el resultado de Shapiro?
+> shapiro.test(x)
+
+        Shapiro-Wilk normality test
+
+data:  x
+W = 0.91129, p-value = 0.29
+
+> shapiro.test(y)
+
+        Shapiro-Wilk normality test
+
+data:  y
+W = 0.91538, p-value = 0.5006
+
+> 
+> set.seed(100)
+> normaly_disb <- rnorm(100,mean=5,sd=1)
+> shapiro.test(normaly_disb)
+
+        Shapiro-Wilk normality test
+
+data:  normaly_disb
+W = 0.98836, p-value = 0.535
+
+> 
+> set.seed(100)
+> not_normaly_disb <- runif(100) #distribución uniforme
+> shapiro.test(not_normaly_disb)
+
+        Shapiro-Wilk normality test
+
+data:  not_normaly_disb
+W = 0.96509, p-value = 0.009436
+
+> 
+> # KOLMOGOROV AND SMIRNOV TEST
+> x<-rnorm(50)
+> y<-runif(50)
+> ks.test(x,y)
+
+        Exact two-sample Kolmogorov-Smirnov test
+
+data:  x and y
+D = 0.58, p-value = 4.048e-08
+alternative hypothesis: two-sided
+
+> 
+> # CHI SQUARE
+> frec<-c(15,19)
+> chisq.test(frec)
+
+        Chi-squared test for given probabilities
+
+data:  frec
+X-squared = 0.47059, df = 1, p-value = 0.4927
+
+> 
+> matrix<-matrix(c(4,11,10,13,3,4,6,8),nrow=2)
+> matrix
+     [,1] [,2] [,3] [,4]
+[1,]    4   10    3    6
+[2,]   11   13    4    8
+> chisq.test(matrix)
+
+        Pearson's Chi-squared test
+
+data:  matrix
+X-squared = 1.2845, df = 3, p-value = 0.7328
+
+Aviso:
+In chisq.test(matrix) : Chi-squared approximation may be incorrect
+> 
+> # FISHER
+> var.test(x,y)
+
+        F test to compare two variances
+
+data:  x and y
+F = 19.014, num df = 49, denom df = 49, p-value < 2.2e-16
+alternative hypothesis: true ratio of variances is not equal to 1
+95 percent confidence interval:
+ 10.79022 33.50696
+sample estimates:
+ratio of variances 
+           19.0144 
+
+> fisher.test(matrix)
+
+        Fisher's Exact Test for Count Data
+
+data:  matrix
+p-value = 0.7229
+alternative hypothesis: two.sided
+
+> 
+> # CORRECIÓN P VALUE
+> install.packages("kableExtra")
+Installing package into ‘C:/Users/User/AppData/Local/R/win-library/4.6’
+(as ‘lib’ is unspecified)
+--- Please select a CRAN mirror for use in this session ---
+probando la URL 'https://ftp.cixug.es/CRAN/bin/windows/contrib/4.6/kableExtra_1.4.1.zip'
+Content type 'application/zip' length 2074512 bytes (2.0 MB)
+downloaded 2.0 MB
+
+package ‘kableExtra’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+        C:\Users\User\AppData\Local\Temp\Rtmpoxb14M\downloaded_packages
+> library("kableExtra")
+> p_values_estudio_1 <- c(0.11, 0.8, 0.92, 0.68, 0.04, 0.15, 0.89, 0.47, 0.88, 0.85, 0.17, 0.59, 0.4, 0.33, 0.97, 0.48, 0.85, 0.07,0.66, 0.41, 0.64, 0.24, 0.72, 0.004, 0.67, 0.51, 0.26,0.94)
+> p_values_estudio_1
+ [1] 0.110 0.800 0.920 0.680 0.040 0.150 0.890 0.470 0.880 0.850 0.170 0.590
+[13] 0.400 0.330 0.970 0.480 0.850 0.070 0.660 0.410 0.640 0.240 0.720 0.004
+[25] 0.670 0.510 0.260 0.940
+> n_1 <- length(p_values_estudio_1)
+> sin_correccion_1 <- sum(p_values_estudio_1 <= 0.05)
+> bonferroni_1 <- sum(p.adjust(p =p_values_estudio_1, method="bonferroni") <= 0.05)
+> BH_1 <- sum(p.adjust(p = p_values_estudio_1, method = "BH") <= 0.05)
+> n_1
+[1] 28
+> sin_correccion_1
+[1] 2
+> bonferroni_1
+[1] 0
+> BH_1
+[1] 0
+> 
+> kable(data.frame(Numero_de_p.values = n_1, Sin_corrección = sin_correccion_1,
++                  Bonferroni = bonferroni_1, Benjamini_Hochberg = BH_1 ), align="c")
+
+
+| Numero_de_p.values | Sin_corrección | Bonferroni | Benjamini_Hochberg |
+|:------------------:|:--------------:|:----------:|:------------------:|
+|         28         |       2        |     0      |         0          |
+> 

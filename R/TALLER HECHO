@@ -1,0 +1,328 @@
+> 
++ #
+> # Taller R
+> #
+> # Expresión diferencial de genes de ratón
+> # Microarray de Affymetrix (Affymetrix Murine Genome U74A version 2 MG_U74Av2
+> # Origen de los datos: GEO GSE5583 (http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE5583)
+> # Publicación: Mol Cell Biol 2006 Nov;26(21):7913-28.  16940178 (http://www.ncbi.nlm.nih.gov/pubmed/16940178)
+> #
+> # Muestras: 3 Wild Type x 3 Histone deacetylase 1 (HDAC1)
+> #
+> # R código original (credits): Ahmed Moustafa
+> #
+> #
+> ##############################################################################
+> 
+> # Instalar RCurl
+> 
+> if (!requireNamespace("BiocManager"))
++     install.packages("BiocManager")
+Loading required namespace: BiocManager
+> BiocManager::install("RCurl")
+Error: Bioconductor version cannot be validated; no internet connection?  See
+  #troubleshooting section in vignette
+Además: Avisos:
+1: In download.file(..., destfile = tmp_config, quiet = TRUE) :
+  URL 'https://bioconductor.org/config.yaml': Timeout of 60 seconds was reached
+2: In download.file(..., destfile = tmp_config, quiet = TRUE) :
+  URL 'http://bioconductor.org/config.yaml': Timeout of 60 seconds was reached
+> 
+> # Si esto falla, que seguro lo hace tratar de instalarlo usando el menú, Paquetes, Servidor Spain A Coruña, RCurl
+> 
+> # Cargamos el paquete y los datos
+> library(RCurl)
+> url = getURL ("http://bit.ly/GSE5583_data", followlocation = TRUE)
+> data = as.matrix(read.table (text = url, row.names = 1, header = T))
+> 
+> # Chequeamos las dimensiones de los datos, y vemos las primeras y las últimas filas
+> dim(data)
+[1] 12488     6
+> headim(data)
+Error en headim(data): no se pudo encontrar la función "headim"
+> tail(data)
+                     WT.GSM130365 WT.GSM130366 WT.GSM130367 KO.GSM130368
+AFFX-TrpnX-5_at             131.1         14.9        120.0        102.9
+AFFX-TrpnX-M_at               8.9          9.8          7.2         12.6
+AFFX-YEL002c/WBP1_at         26.6         49.6         46.7         29.2
+AFFX-YEL018w/_at             15.7         55.3         10.5          5.6
+AFFX-YEL021w/URA3_at        146.3         89.2         83.7         96.4
+AFFX-YEL024w/RIP1_at         78.6         79.8        134.8        119.4
+                     KO.GSM130369 KO.GSM130370
+AFFX-TrpnX-5_at              12.9         22.6
+AFFX-TrpnX-M_at              15.6          8.7
+AFFX-YEL002c/WBP1_at         59.3         15.7
+AFFX-YEL018w/_at              7.2          3.4
+AFFX-YEL021w/URA3_at         85.0         85.4
+AFFX-YEL024w/RIP1_at        127.5         62.4
+> 
+> # Hacemos un primer histograma para explorar los datos
+> hist(data, col = "gray", main="GSE5583 - Histogram")
+> 
+> # Transformamos los datos con un logaritmo 
+> # ¿Qué pasa si hacemos una transformación logarítima de los datos? ¿Para qué sirve?
+> data2 = log2(data)
+> hist(data2, col = "gray", main="GSE5583 (log2) - Histogram")
+> #La transformación logarítmica se usa normalmente si los datos tienen una distribución sesgada de forma positiva 
+> #(como se muestra a continuación) y algunos valores son muy grandes. Si estos valores grandes están en su área de estudio, 
+> #la transformación logarítmica le ayudará a que las varianzas sean más constantes y normalizará sus datos. 
+> #No cabe duda de que Gauss y su distribución con forma de campana son la base para la realización de gran parte de 
+> #las pruebas de contraste de hipótesis e inferencia de datos en estadística. Por eso, a nadie le llama 
+> #la atención que muchas pruebas solo puedan realizarse cuando la variable que se estudia sigue una distribución normal.
+> #Por ejemplo, si queremos comparar las medias de dos muestras, éstas tienen que ser independientes, 
+> #seguir una distribución normal y tener una varianza similar (homocedasticidad). 
+> #Lo mismo ocurre para muchas otras comparaciones, estudios de correlación, etc.
+> #Cuando tenemos la mala suerte de que nuestra muestra no sigue una distribución normal debemos recurrir a las pruebas 
+> #de contraste no paramétricas. Estas pruebas son igual de serias y rigurosas que las paramétricas, 
+> #pero tienen el inconveniente de que son mucho más conservadoras, en el sentido de que cuesta más alcanzar el 
+> #nivel de significación estadística necesario para poder rechazar la hipótesis nula. 
+> #Podría darse el caso de que no obtengamos significación estadística con la prueba no paramétrica mientras que, 
+> #si pudiésemos aplicarla, si podríamos obtenerla con la paramétrica.
+> #Para evitar que pueda pasarnos esto, a alguien se le debió ocurrir que podemos transformar los datos de tal forma 
+> #que los nuevos datos transformados sí sigan la distribución normal. Esto, que parece un truco sucio, 
+> #es perfectamente lícito, siempre en cuanto tengamos en cuenta que 
+> #luego tendremos que hacer la transformación inversa para interpretar correctamente los resultados.
+> #Pensemos un momento en los logaritmos decimales (base 10). 
+> #En la escala logarítmica hay la misma distancia entre 1 y 10 que entre 10 y 100 y que entre 100 y 1000. 
+> #¿Qué quiere decir esto?. Pues que si transformamos cada variable en su logaritmo, los valores entre 1 y 10 se expandirán, 
+> #mientras que los más altos se comprimirán. Por eso la transformación logarítmica es útil para transformar distribuciones 
+> #con sesgo positivo (con cola más larga hacia la derecha): la parte izquierda se expandirá, 
+> #mientras que la derecha se comprimirá, favoreciendo que la curva resultante se ajuste mejor a una normal.
+> #Esta transformación logarítmica solo vale para números mayores que cero, aunque si tenemos una distribución con 
+> #valores negativos podríamos sumar una constante a cada valor para que fuese mayor que cero antes de calcular su 
+> #logaritmo. Cuando la nueva curva se ajusta a la campana se dice que sigue una distribución lognormal.
+> #En ocasiones, si la distribución está muy sesgada, puede hacerse la transformación recíproca (1/x), más potente y 
+> #que produce un efecto similar a la logarítmica. Otra tercera posibilidad, menos potente que la logarítmica, 
+> #es transformar calculando la raíz cuadrada de cada valor.
+> #Cuando el sesgo de la distribución es negativo (cola más larga hacia la izquierda) nos interesará lo contrario: 
+> #comprimir la cola de la izquierda y extender la de la derecha. 
+> #Si lo pensamos, esto puede hacerse elevando cada valor al cuadrado o al cubo. 
+> #Los productos resultantes de los valores pequeños estarán menos alejados que los resultantes de valores grandes, 
+> #con lo que la distribución se parecerá más a una normal.
+> 
+> # Hacemos un boxplot con los datos transformados. ¿Qué significan los parámetros que hemos empleado?
+> # ¿Qué es un boxplot?
+> boxplot(data2, col=c("blue", "blue", "blue",
++ "orange", "orange", "orange"),
++ main="GSE5583 - boxplots", las=2)
+> #las son para los ejes verticales. main es el titulo, col los colores
+> #Un diagrama de caja es un método estandarizado para representar gráficamente 
+> #una serie de datos numéricos a través de sus cuartiles. De esta manera, se muestran a simple vista la mediana y 
+> #los cuartiles de los datos, ​ 
+> #y también pueden representarse sus valores atípicos
+> 
+> # Hacemos un hierarchical clustering de las muestras basándonos en un coeficiente de correlación ç
+> # de los valores de expresión. ¿Es correcta la separación?
+> hc = hclust(as.dist(1-cor(data2)))
+> plot(hc, main="GSE5583 - Hierarchical Clustering")
+> # Sí
+> 
+> #######################################
+> # Análisis de Expresión Diferencial 
+> #######################################
+> 
+> # Primero separamos las dos condiciones. ¿Qué tipo de datos has generado?
+> wt <- data2[,1:3]
+> ko <- data2[,4:6]
+> class(wt)
+[1] "matrix" "array" 
+> 
+> # Calcula las medias de las muestras para cada condición. Usa apply
+> wt.mean = apply(wt, 1, mean)
+> ko.mean = apply(ko, 1, mean)
+> head(wt.mean)
+100001_at 100002_at 100003_at 100004_at 100005_at 100006_at 
+ 4.039868  5.306426  6.320360  8.120503 10.408872  5.089087 
+> head(ko.mean)
+100001_at 100002_at 100003_at 100004_at 100005_at 100006_at 
+ 4.844978  4.452076  6.597451  8.576804 10.318839  5.358071 
+> 
+> # ¿Cuál es la media más alta?
+> limit = max(wt.mean, ko.mean)
+> limit
+[1] 15.14874
+> 
+> # Ahora hacemos un scatter plot (gráfico de dispersión)
+> plot(ko.mean ~ wt.mean, xlab = "WT", ylab = "KO",
++ main = "GSE5583 - Scatter", xlim = c(0, limit), ylim = c(0, limit))
+> # Añadir una línea diagonal con abline
+> abline(0, 1, col = "red")
+> 
+> # ¿Eres capaz de añadirle un grid?
+> grid()
+> #abline(a, b): línea de pendiente b y ordenada en el origen a
+> #abline(h=y): línea horizontal
+> #abline(v=x): línea vertical
+> #abline(1, 2, col = "red")     # línea y = 2x + 1
+> #abline(h = 2, col = "green")  # línea y = 2
+> #abline(v = 3, col = "violet") # línea x = 3
+> 
+> # Calculamos la diferencia entre las medias de las condiciones
+> diff.mean = wt.mean - ko.mean
+> 
+> # Hacemos un histograma de las diferencias de medias
+> hist(diff.mean, col = "gray")
+> 
+> # Calculamos la significancia estadística con un t-test.
+> # Primero crea una lista vacía para guardar los p-values
+> # Segundo crea una lista vacía para guardar las estadísticas del test.
+> # OJO que aquí usamos los datos SIN TRANSFORMAR. ¿Por qué?
+> # ¿Cuántas valores tiene cada muestra?
+> pvalue = NULL 
+> tstat = NULL 
+> for(i in 1 : nrow(data)) { #Para cada gen
++ x = wt[i,] # gene wt número i
++ y = ko[i,] # gene ko número i
++ 
++ # Hacemos el test
++ t = t.test(x, y)
++ 
++ # Añadimos el p-value a la lista
++ pvalue[i] = t$p.value
++ # Añadimos las estadísticas a la lista
++ tstat[i] = t$statistic
++ }
+> 
+> head(pvalue)
+[1] 0.5449730 0.3253745 0.3287830 0.1892376 0.6928410 0.7180077
+> 
+> # Ahora comprobamos que hemos hecho TODOS los cálculos
+> length(pvalue)
+[1] 12488
+> #La transformación solo se emplea para las gráficas
+> 
+> # Hacemos un histograma de los p-values.
+> # ¿Qué pasa si le ponemos con una transformación de -log10?
+> hist(pvalue,col="gray")
+> hist(-log10(pvalue), col = "gray")
+> 
+> # Hacemos un volcano plot. Aquí podemos meter la diferencia de medias y la significancia estadística
+> plot(diff.mean, -log10(pvalue), main = "GSE5583 - Volcano")
+> 
+> # Queremos establecer que el mínimo para considerar una diferencia significativa, es con una diferencia de 2 y un p-value de 0.01
+> # ¿Puedes representarlo en el gráfico?
+> diff.mean_cutoff = 2
+> pvalue_cutoff = 0.01
+> abline(v = diff.mean_cutoff, col = "blue", lwd = 3)
+> abline(v = -diff.mean_cutoff, col = "red", lwd = 3)
+> abline(h = -log10(pvalue_cutoff), col = "green", lwd = 3)
+> 
+> # Ahora buscamos los genes que satisfagan estos criterios
+> # Primero hacemos el filtro para la diferencia de medias (fold)
+> filter_by_diff.mean = abs(diff.mean) >= diff.mean_cutoff
+> dim(data[filter_by_diff.mean, ])
+[1] 210   6
+> 
+> # Ahora el filtro de p-value
+> filter_by_pvalue = pvalue <= pvalue_cutoff
+> dim(data[filter_by_pvalue, ])
+[1] 429   6
+> 
+> # Ahora las combinamos. ¿Cuántos genes cumplen los dos criterios?
+> filter_combined = filter_by_diff.mean & filter_by_pvalue
+> filtered = data[filter_combined,]
+> dim(filtered)
+[1] 42  6
+> head(filtered)
+            WT.GSM130365 WT.GSM130366 WT.GSM130367 KO.GSM130368 KO.GSM130369
+100716_at           28.9         30.0         49.4        190.4        221.5
+100914_at         1296.9        966.8       1217.8       4866.9       4658.1
+101368_at          980.4       1180.1       1337.4       4940.2       4749.3
+101550_at           46.1         43.4         74.6          4.4          7.5
+101635_f_at        137.7        105.6        123.1         38.5         28.7
+101883_s_at         54.5         69.9         35.1       3028.3       3280.2
+            KO.GSM130370
+100716_at          157.5
+100914_at         4473.3
+101368_at         4324.1
+101550_at            4.1
+101635_f_at         25.0
+101883_s_at       3243.9
+> 
+> # Ahora generamos otro volcano plot con los genes seleccionados marcados en rojo
+> plot(diff.mean, -log10(pvalue), main = "GSE5583 - Volcano #2")
+> points (diff.mean[filter_combined], -log10(pvalue[filter_combined]),col = "red")
+> 
+> # Ahora vamos a marcar los que estarían sobreexpresados (rojo) y reprimidos (azul). ¿Por qué parece que están al revés?
+> plot(diff.mean, -log10(pvalue), main = "GSE5583 - Volcano #3")
+> points (diff.mean[filter_combined & diff.mean < 0],
++ -log10(pvalue[filter_combined & diff.mean < 0]), col = "red")
+> points (diff.mean[filter_combined & diff.mean > 0],
++ -log10(pvalue[filter_combined & diff.mean > 0]), col = "blue")
+> #diff.mean = wt.mean - ko.mean
+> 
+> # Ahora vamos a generar un mapa. Para ello primero tenemos que hacer un cluster de las columnas y los genes 
+> # ¿Qué es cada parámetro que hemos usado dentro de la función heatmap?
+> # ¿Eres capaz de cambiar los colores del heatmap? Pista: usar el argumento col y hcl.colors
+> rowv = as.dendrogram(hclust(as.dist(1-cor(t(filtered)))))
+> colv = as.dendrogram(hclust(as.dist(1-cor(filtered))))
+> heatmap(filtered, Rowv=rowv, Colv=colv, cexCol=0.7,labRow=FALSE)
+> 
+> heatmap(filtered)
+> #cexCol es el tamaño de letra del eje x
+> #Colv y Rowv son los dendogramas
+> #heatmap(filtered, Rowv=rowv, Colv=colv, cexCol=0.7, col=hcl.colors(50))
+> 
+> # Ahora vamos a crear un heatmap más chulo. Para ello necesitamos dos paquetes: gplots y RcolorBrewer
+> #if (!requireNamespace("BiocManager"))
+> #    install.packages("BiocManager")
+> #BiocManager::install(c("gplots","RColorBrewer"))
+> install.packages("gplots")
+Installing package into ‘C:/Users/User/AppData/Local/R/win-library/4.6’
+(as ‘lib’ is unspecified)
+probando la URL 'https://ftp.cixug.es/CRAN/bin/windows/contrib/4.6/gplots_3.3.0.zip'
+Content type 'application/zip' length 4905499 bytes (4.7 MB)
+downloaded 4.7 MB
+
+package ‘gplots’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+        C:\Users\User\AppData\Local\Temp\Rtmpoxb14M\downloaded_packages
+> install.packages("RColorBrewer")
+Installing package into ‘C:/Users/User/AppData/Local/R/win-library/4.6’
+(as ‘lib’ is unspecified)
+probando la URL 'https://ftp.cixug.es/CRAN/bin/windows/contrib/4.6/RColorBrewer_1.1-3.zip'
+Content type 'application/zip' length 54704 bytes (53 KB)
+downloaded 53 KB
+
+package ‘RColorBrewer’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+        C:\Users\User\AppData\Local\Temp\Rtmpoxb14M\downloaded_packages
+> 
+> library(gplots)
+
+---------------------
+gplots 3.3.0 loaded:
+  * Use citation('gplots') for citation info.
+  * Homepage: https://talgalili.github.io/gplots/
+  * Report issues: https://github.com/talgalili/gplots/issues
+  * Ask questions: https://stackoverflow.com/questions/tagged/gplots
+  * Suppress this message with: suppressPackageStartupMessages(library(gplots))
+---------------------
+
+
+Adjuntando el paquete: ‘gplots’
+
+The following object is masked from ‘package:stats’:
+
+    lowess
+
+> library(RColorBrewer)
+> 
+> # Hacemos nuestro heatmap
+> heatmap.2(filtered, Rowv=rowv, Colv=colv, cexCol=0.7,
++ col = rev(redblue(256)), scale = "row")
+> 
+> # Lo guardamos en un archivo PDF
+> pdf ("GSE5583_DE_Heatmap.pdf")
+> heatmap.2(filtered, Rowv=rowv, Colv=colv, cexCol=0.7,
++ col = rev(redblue(256)), scale = "row",labRow=FALSE)
+> dev.off()
+windows 
+      2 
+> heatmap.2(filtered, Rowv=rowv, Colv=colv, cexCol=0.7,col = redgreen(75), scale = "row",labRow=FALSE)
+> 
+> # Guardamos los genes diferencialmente expresados y filtrados en un fichero
+> 
+> 

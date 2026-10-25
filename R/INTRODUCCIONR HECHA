@@ -1,0 +1,1051 @@
+> ##################################################################################################        
+>                               INTRODUCCION A R                             
+Error: unexpected symbol en "                              INTRODUCCION A"
+> ##################################################################################################
+> 
+> 
+> ##### 1.- INTRODUCCION
+> 
+> # Para ejecutar este Script pulsa CTRL+R (Windows) o CMD+Enter (MAC)
+> 
+> # Para poner bien el directorio de trabajo:
+> # "El directorio de trabajo tiene que ser el mismo del script."
+> # Desde el menú: WINDOWS: Archivo -> Cambiar Dir
+> #     MAC: Miscelaneo -> Cambiar Directorio Trabajo
+> # Con un comando:
+> #setwd("ruta")
+> 
+> # Para saber dónde estamos:
+> getwd()
+[1] "C:/Users/User/Documents/Bioinformática/R/Introducción a R y gráficos -20261006"
+> 
+> 
+> ##### 2.- INSTALACION Y CARGA DE PAQUETES
+> 
+> # Instalar de forma directa (comentar estas líneas si ya lo has instalado)
+> install.packages("UsingR")
+Aviso: package ‘UsingR’ is in use and will not be installed
+> 
+> # Cargar los paquetes instalados
+> library(UsingR)
+> 
+> # Instalar solo si no está instalado (avanzado)
+> 
+> paquetes <- c("UsingR","devtools","pacman","ggplot2")  # aquí poner los paquetes a instalar
+> instalar <- paquetes[!paquetes %in% installed.packages()]
+> if(length(instalar)) install.packages(instalar)
+> lapply(paquetes, library, character.only = TRUE)
+[[1]]
+ [1] "ggplot2"   "pacman"    "devtools"  "usethis"   "UsingR"    "Hmisc"    
+ [7] "HistData"  "MASS"      "stats"     "graphics"  "grDevices" "utils"    
+[13] "datasets"  "methods"   "base"     
+
+[[2]]
+ [1] "ggplot2"   "pacman"    "devtools"  "usethis"   "UsingR"    "Hmisc"    
+ [7] "HistData"  "MASS"      "stats"     "graphics"  "grDevices" "utils"    
+[13] "datasets"  "methods"   "base"     
+
+[[3]]
+ [1] "ggplot2"   "pacman"    "devtools"  "usethis"   "UsingR"    "Hmisc"    
+ [7] "HistData"  "MASS"      "stats"     "graphics"  "grDevices" "utils"    
+[13] "datasets"  "methods"   "base"     
+
+[[4]]
+ [1] "ggplot2"   "pacman"    "devtools"  "usethis"   "UsingR"    "Hmisc"    
+ [7] "HistData"  "MASS"      "stats"     "graphics"  "grDevices" "utils"    
+[13] "datasets"  "methods"   "base"     
+
+> 
+> # Acceso al manual
+> help.start()
+If nothing happens, you should open
+‘http://127.0.0.1:31126/doc/html/index.html’ yourself
+> help(hist) # aquí dentro de los paréntesis se pone la función sobre la que queremos ayuda
+> 
+> 
+> ##### 3.- R COMO CALCULADORA
+> 
+> 1+1
+[1] 2
+> 
+> 2+3*4
+[1] 14
+> 
+> 3^2
+[1] 9
+> 
+> exp(1)
+[1] 2.718282
+> 
+> sqrt(10)
+[1] 3.162278
+> 
+> pi
+[1] 3.141593
+> 
+> 2*pi*6378 #circunferencia de la Tierra
+[1] 40074.16
+> 
+> 
+> # EJERCICIO:
+> # Calcula el área de un círculo de radio 10 (A=pi*r^2).
+> 
+> pi*10^2
+[1] 314.1593
+> 
+> 
+> ##### 4.- VARIABLES
+> 
+> # Para asignar valores se puede usar indistintamente "<-" o "="
+> 
+> # Numeric: contienen números con decimales
+> # Booleanos: TRUE or FALSE
+> # Strings: secuencias de caracteres
+> 
+> # Nombres de variables: pueden incluir puntos, "_" pero NUNCA "-". NUNCA empiezan por números.
+> # Cuidado con usar nombres con palabras especiales, como nombres de funciones para nombrar variables.
+> 
+> num <- 10     # numérico
+> num = 10
+> texto  <- "Hola" # carácter
+> texto
+[1] "Hola"
+> logico <- TRUE   # lógico
+> logico
+[1] TRUE
+> x<-1
+> y<-3
+> z<-4
+> 
+> x*y*z
+[1] 12
+> 
+> x*y*Z #Hay distinción entre mayúsculas y minúsculas!
+Error: objeto 'Z' no encontrado
+> 
+> This.Year<-2023
+> 
+> 
+> # EJERCICIO:
+> # Crea tres variables: tu edad, tu nombre y si te gusta R (TRUE/FALSE).
+> 
+> edad = 200
+> nombre = "Pepito"
+> gustaR = FALSE
+> 
+> ##### 5.- LISTAS / VECTORES
+> 
+> # Series (listas o vectores)
+> 
+> # Diferentes maneras de crearlos y operar con ellos
+> 
+> # Crearlos con la función c(): 
+> x<-c(2,0,0,4)
+> y<-c(1,9,9,9)
+> x
+[1] 2 0 0 4
+> y
+[1] 1 9 9 9
+> 
+> x+y # suma de vectores solo si ambos tienen el mismo tamaño
+[1]  3  9  9 13
+> x*4 # multiplicacion de un numero por todos los elementos del vector
+[1]  8  0  0 16
+> sqrt(x) #aplicacion de la funcion sqrt() sobre todos los elementos del vector
+[1] 1.414214 0.000000 0.000000 2.000000
+> 
+> # Crearlos con las funciones rep() y seq()
+> rep(1,10)
+ [1] 1 1 1 1 1 1 1 1 1 1
+> 
+> seq(2,6)
+[1] 2 3 4 5 6
+> 
+> seq(4,20,10)
+[1]  4 14
+> 
+> #Para navegar por ellos, se buscan sus posiciones
+> x[1]
+[1] 2
+> x[-2]
+[1] 2 0 4
+> x[1]<-3; x  # el ";" permite poner dos líneas de código en una sola, una detrás de la otra
+[1] 3 0 0 4
+> x[-1]<-5;x  # reasignamos valores dentro del vector
+[1] 3 5 5 5
+> 
+> y<9 # nos devuelve un booleano dependiendo de si los elementos de ese vector cumplen ese criterio
+[1]  TRUE FALSE FALSE FALSE
+> y[y<9]=2 # reasigna solo si cumple la condicion
+> y
+[1] 2 9 9 9
+> 
+> notas <- c(mate = 8, historia = 7, fisica = 9) # Esto de aquí se parece un poco a un diccionario
+> notas# En verdad es como una tabla
+    mate historia   fisica 
+       8        7        9 
+> notas["mate"] # navegas por el nombre de la columna
+mate 
+   8 
+> notas[1]
+mate 
+   8 
+> mean(notas) # saca la media
+[1] 8
+> 
+> 
+> # EJERCICIO:
+> # Crea un vector con tus 5 números favoritos y calcula su media.
+> vector_num <- c(3,5,7,12,21)
+> vector_num
+[1]  3  5  7 12 21
+> mean(vector_num)
+[1] 9.6
+> 
+> ##### 6.- DATA FRAMES
+> 
+> # Son agrupaciones de vectores o tablas
+> 
+> # Es de lo más fácil y común de manejar en R
+> 
+> bp<-read.table("bp.txt",header=T) # así leemos el archivo
+> bp
+  HEIGHT WEIGHT WAIST HIP BPSYS BPDIA
+1    172     72    87  94 127.5  80.0
+2    166     91   109 107 172.5 100.0
+3    174     80    95 101 123.0  64.0
+4    176     79    93 100 117.0  76.0
+5    166     55    70  94 100.0  60.0
+6    163     76    96  99 160.0  87.5
+> 
+> bp[1,1]
+[1] 172
+> bp[,1]
+[1] 172 166 174 176 166 163
+> 
+> bp["WEIGHT"]
+  WEIGHT
+1     72
+2     91
+3     80
+4     79
+5     55
+6     76
+> bp$WEIGHT
+[1] 72 91 80 79 55 76
+> bp["WEIGHT"] # Accedemos al contenido de la columna
+  WEIGHT
+1     72
+2     91
+3     80
+4     79
+5     55
+6     76
+> bp[,2] # Lo mismo pero no aparece el nombre de la columna
+[1] 72 91 80 79 55 76
+> bp$WEIGHT # lo mismo
+[1] 72 91 80 79 55 76
+> bp$WEIGHT[2] # Sacar un valor de la columna en concreto 
+[1] 91
+> bp[2,] # Sacamos una fila entera
+  HEIGHT WEIGHT WAIST HIP BPSYS BPDIA
+2    166     91   109 107 172.5   100
+> bp[2,][1]# Sacamos un valor de la fila en concreto
+  HEIGHT
+2    166
+> bp[2,1]
+[1] 166
+> 
+> 
+> iris
+    Sepal.Length Sepal.Width Petal.Length Petal.Width    Species
+1            5.1         3.5          1.4         0.2     setosa
+2            4.9         3.0          1.4         0.2     setosa
+3            4.7         3.2          1.3         0.2     setosa
+4            4.6         3.1          1.5         0.2     setosa
+5            5.0         3.6          1.4         0.2     setosa
+6            5.4         3.9          1.7         0.4     setosa
+7            4.6         3.4          1.4         0.3     setosa
+8            5.0         3.4          1.5         0.2     setosa
+9            4.4         2.9          1.4         0.2     setosa
+10           4.9         3.1          1.5         0.1     setosa
+11           5.4         3.7          1.5         0.2     setosa
+12           4.8         3.4          1.6         0.2     setosa
+13           4.8         3.0          1.4         0.1     setosa
+14           4.3         3.0          1.1         0.1     setosa
+15           5.8         4.0          1.2         0.2     setosa
+16           5.7         4.4          1.5         0.4     setosa
+17           5.4         3.9          1.3         0.4     setosa
+18           5.1         3.5          1.4         0.3     setosa
+19           5.7         3.8          1.7         0.3     setosa
+20           5.1         3.8          1.5         0.3     setosa
+21           5.4         3.4          1.7         0.2     setosa
+22           5.1         3.7          1.5         0.4     setosa
+23           4.6         3.6          1.0         0.2     setosa
+24           5.1         3.3          1.7         0.5     setosa
+25           4.8         3.4          1.9         0.2     setosa
+26           5.0         3.0          1.6         0.2     setosa
+27           5.0         3.4          1.6         0.4     setosa
+28           5.2         3.5          1.5         0.2     setosa
+29           5.2         3.4          1.4         0.2     setosa
+30           4.7         3.2          1.6         0.2     setosa
+31           4.8         3.1          1.6         0.2     setosa
+32           5.4         3.4          1.5         0.4     setosa
+33           5.2         4.1          1.5         0.1     setosa
+34           5.5         4.2          1.4         0.2     setosa
+35           4.9         3.1          1.5         0.2     setosa
+36           5.0         3.2          1.2         0.2     setosa
+37           5.5         3.5          1.3         0.2     setosa
+38           4.9         3.6          1.4         0.1     setosa
+39           4.4         3.0          1.3         0.2     setosa
+40           5.1         3.4          1.5         0.2     setosa
+41           5.0         3.5          1.3         0.3     setosa
+42           4.5         2.3          1.3         0.3     setosa
+43           4.4         3.2          1.3         0.2     setosa
+44           5.0         3.5          1.6         0.6     setosa
+45           5.1         3.8          1.9         0.4     setosa
+46           4.8         3.0          1.4         0.3     setosa
+47           5.1         3.8          1.6         0.2     setosa
+48           4.6         3.2          1.4         0.2     setosa
+49           5.3         3.7          1.5         0.2     setosa
+50           5.0         3.3          1.4         0.2     setosa
+51           7.0         3.2          4.7         1.4 versicolor
+52           6.4         3.2          4.5         1.5 versicolor
+53           6.9         3.1          4.9         1.5 versicolor
+54           5.5         2.3          4.0         1.3 versicolor
+55           6.5         2.8          4.6         1.5 versicolor
+56           5.7         2.8          4.5         1.3 versicolor
+57           6.3         3.3          4.7         1.6 versicolor
+58           4.9         2.4          3.3         1.0 versicolor
+59           6.6         2.9          4.6         1.3 versicolor
+60           5.2         2.7          3.9         1.4 versicolor
+61           5.0         2.0          3.5         1.0 versicolor
+62           5.9         3.0          4.2         1.5 versicolor
+63           6.0         2.2          4.0         1.0 versicolor
+64           6.1         2.9          4.7         1.4 versicolor
+65           5.6         2.9          3.6         1.3 versicolor
+66           6.7         3.1          4.4         1.4 versicolor
+67           5.6         3.0          4.5         1.5 versicolor
+68           5.8         2.7          4.1         1.0 versicolor
+69           6.2         2.2          4.5         1.5 versicolor
+70           5.6         2.5          3.9         1.1 versicolor
+71           5.9         3.2          4.8         1.8 versicolor
+72           6.1         2.8          4.0         1.3 versicolor
+73           6.3         2.5          4.9         1.5 versicolor
+74           6.1         2.8          4.7         1.2 versicolor
+75           6.4         2.9          4.3         1.3 versicolor
+76           6.6         3.0          4.4         1.4 versicolor
+77           6.8         2.8          4.8         1.4 versicolor
+78           6.7         3.0          5.0         1.7 versicolor
+79           6.0         2.9          4.5         1.5 versicolor
+80           5.7         2.6          3.5         1.0 versicolor
+81           5.5         2.4          3.8         1.1 versicolor
+82           5.5         2.4          3.7         1.0 versicolor
+83           5.8         2.7          3.9         1.2 versicolor
+84           6.0         2.7          5.1         1.6 versicolor
+85           5.4         3.0          4.5         1.5 versicolor
+86           6.0         3.4          4.5         1.6 versicolor
+87           6.7         3.1          4.7         1.5 versicolor
+88           6.3         2.3          4.4         1.3 versicolor
+89           5.6         3.0          4.1         1.3 versicolor
+90           5.5         2.5          4.0         1.3 versicolor
+91           5.5         2.6          4.4         1.2 versicolor
+92           6.1         3.0          4.6         1.4 versicolor
+93           5.8         2.6          4.0         1.2 versicolor
+94           5.0         2.3          3.3         1.0 versicolor
+95           5.6         2.7          4.2         1.3 versicolor
+96           5.7         3.0          4.2         1.2 versicolor
+97           5.7         2.9          4.2         1.3 versicolor
+98           6.2         2.9          4.3         1.3 versicolor
+99           5.1         2.5          3.0         1.1 versicolor
+100          5.7         2.8          4.1         1.3 versicolor
+101          6.3         3.3          6.0         2.5  virginica
+102          5.8         2.7          5.1         1.9  virginica
+103          7.1         3.0          5.9         2.1  virginica
+104          6.3         2.9          5.6         1.8  virginica
+105          6.5         3.0          5.8         2.2  virginica
+106          7.6         3.0          6.6         2.1  virginica
+107          4.9         2.5          4.5         1.7  virginica
+108          7.3         2.9          6.3         1.8  virginica
+109          6.7         2.5          5.8         1.8  virginica
+110          7.2         3.6          6.1         2.5  virginica
+111          6.5         3.2          5.1         2.0  virginica
+112          6.4         2.7          5.3         1.9  virginica
+113          6.8         3.0          5.5         2.1  virginica
+114          5.7         2.5          5.0         2.0  virginica
+115          5.8         2.8          5.1         2.4  virginica
+116          6.4         3.2          5.3         2.3  virginica
+117          6.5         3.0          5.5         1.8  virginica
+118          7.7         3.8          6.7         2.2  virginica
+119          7.7         2.6          6.9         2.3  virginica
+120          6.0         2.2          5.0         1.5  virginica
+121          6.9         3.2          5.7         2.3  virginica
+122          5.6         2.8          4.9         2.0  virginica
+123          7.7         2.8          6.7         2.0  virginica
+124          6.3         2.7          4.9         1.8  virginica
+125          6.7         3.3          5.7         2.1  virginica
+126          7.2         3.2          6.0         1.8  virginica
+127          6.2         2.8          4.8         1.8  virginica
+128          6.1         3.0          4.9         1.8  virginica
+129          6.4         2.8          5.6         2.1  virginica
+130          7.2         3.0          5.8         1.6  virginica
+131          7.4         2.8          6.1         1.9  virginica
+132          7.9         3.8          6.4         2.0  virginica
+133          6.4         2.8          5.6         2.2  virginica
+134          6.3         2.8          5.1         1.5  virginica
+135          6.1         2.6          5.6         1.4  virginica
+136          7.7         3.0          6.1         2.3  virginica
+137          6.3         3.4          5.6         2.4  virginica
+138          6.4         3.1          5.5         1.8  virginica
+139          6.0         3.0          4.8         1.8  virginica
+140          6.9         3.1          5.4         2.1  virginica
+141          6.7         3.1          5.6         2.4  virginica
+142          6.9         3.1          5.1         2.3  virginica
+143          5.8         2.7          5.1         1.9  virginica
+144          6.8         3.2          5.9         2.3  virginica
+145          6.7         3.3          5.7         2.5  virginica
+146          6.7         3.0          5.2         2.3  virginica
+147          6.3         2.5          5.0         1.9  virginica
+148          6.5         3.0          5.2         2.0  virginica
+149          6.2         3.4          5.4         2.3  virginica
+150          5.9         3.0          5.1         1.8  virginica
+> head(iris)       # dataset integrado en R
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+5          5.0         3.6          1.4         0.2  setosa
+6          5.4         3.9          1.7         0.4  setosa
+> tail(iris)
+    Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+145          6.7         3.3          5.7         2.5 virginica
+146          6.7         3.0          5.2         2.3 virginica
+147          6.3         2.5          5.0         1.9 virginica
+148          6.5         3.0          5.2         2.0 virginica
+149          6.2         3.4          5.4         2.3 virginica
+150          5.9         3.0          5.1         1.8 virginica
+> str(iris)
+'data.frame':   150 obs. of  5 variables:
+ $ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+ $ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+ $ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+ $ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+ $ Species     : Factor w/ 3 levels "setosa","versicolor",..: 1 1 1 1 1 1 1 1 1 1 ...
+> summary(iris)
+  Sepal.Length    Sepal.Width     Petal.Length    Petal.Width          Species  
+ Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100   setosa    :50  
+ 1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300   versicolor:50  
+ Median :5.800   Median :3.000   Median :4.350   Median :1.300   virginica :50  
+ Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199                  
+ 3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800                  
+ Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500                  
+> dim(iris)
+[1] 150   5
+> 
+> head(iris)
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+5          5.0         3.6          1.4         0.2  setosa
+6          5.4         3.9          1.7         0.4  setosa
+> 
+> iris$Species
+  [1] setosa     setosa     setosa     setosa     setosa     setosa    
+  [7] setosa     setosa     setosa     setosa     setosa     setosa    
+ [13] setosa     setosa     setosa     setosa     setosa     setosa    
+ [19] setosa     setosa     setosa     setosa     setosa     setosa    
+ [25] setosa     setosa     setosa     setosa     setosa     setosa    
+ [31] setosa     setosa     setosa     setosa     setosa     setosa    
+ [37] setosa     setosa     setosa     setosa     setosa     setosa    
+ [43] setosa     setosa     setosa     setosa     setosa     setosa    
+ [49] setosa     setosa     versicolor versicolor versicolor versicolor
+ [55] versicolor versicolor versicolor versicolor versicolor versicolor
+ [61] versicolor versicolor versicolor versicolor versicolor versicolor
+ [67] versicolor versicolor versicolor versicolor versicolor versicolor
+ [73] versicolor versicolor versicolor versicolor versicolor versicolor
+ [79] versicolor versicolor versicolor versicolor versicolor versicolor
+ [85] versicolor versicolor versicolor versicolor versicolor versicolor
+ [91] versicolor versicolor versicolor versicolor versicolor versicolor
+ [97] versicolor versicolor versicolor versicolor virginica  virginica 
+[103] virginica  virginica  virginica  virginica  virginica  virginica 
+[109] virginica  virginica  virginica  virginica  virginica  virginica 
+[115] virginica  virginica  virginica  virginica  virginica  virginica 
+[121] virginica  virginica  virginica  virginica  virginica  virginica 
+[127] virginica  virginica  virginica  virginica  virginica  virginica 
+[133] virginica  virginica  virginica  virginica  virginica  virginica 
+[139] virginica  virginica  virginica  virginica  virginica  virginica 
+[145] virginica  virginica  virginica  virginica  virginica  virginica 
+Levels: setosa versicolor virginica
+> iris[1:5, c("Sepal.Length", "Species")]
+  Sepal.Length Species
+1          5.1  setosa
+2          4.9  setosa
+3          4.7  setosa
+4          4.6  setosa
+5          5.0  setosa
+> 
+> # EJERCICIO:
+> # Obtén la media de Sepal.Width de iris.
+> head(iris)
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+5          5.0         3.6          1.4         0.2  setosa
+6          5.4         3.9          1.7         0.4  setosa
+> iris$Sepal.Width
+  [1] 3.5 3.0 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 3.7 3.4 3.0 3.0 4.0 4.4 3.9 3.5 3.8
+ [20] 3.8 3.4 3.7 3.6 3.3 3.4 3.0 3.4 3.5 3.4 3.2 3.1 3.4 4.1 4.2 3.1 3.2 3.5 3.6
+ [39] 3.0 3.4 3.5 2.3 3.2 3.5 3.8 3.0 3.8 3.2 3.7 3.3 3.2 3.2 3.1 2.3 2.8 2.8 3.3
+ [58] 2.4 2.9 2.7 2.0 3.0 2.2 2.9 2.9 3.1 3.0 2.7 2.2 2.5 3.2 2.8 2.5 2.8 2.9 3.0
+ [77] 2.8 3.0 2.9 2.6 2.4 2.4 2.7 2.7 3.0 3.4 3.1 2.3 3.0 2.5 2.6 3.0 2.6 2.3 2.7
+ [96] 3.0 2.9 2.9 2.5 2.8 3.3 2.7 3.0 2.9 3.0 3.0 2.5 2.9 2.5 3.6 3.2 2.7 3.0 2.5
+[115] 2.8 3.2 3.0 3.8 2.6 2.2 3.2 2.8 2.8 2.7 3.3 3.2 2.8 3.0 2.8 3.0 2.8 3.8 2.8
+[134] 2.8 2.6 3.0 3.4 3.1 3.0 3.1 3.1 3.1 2.7 3.2 3.3 3.0 2.5 3.0 3.4 3.0
+> iris[,2]
+  [1] 3.5 3.0 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 3.7 3.4 3.0 3.0 4.0 4.4 3.9 3.5 3.8
+ [20] 3.8 3.4 3.7 3.6 3.3 3.4 3.0 3.4 3.5 3.4 3.2 3.1 3.4 4.1 4.2 3.1 3.2 3.5 3.6
+ [39] 3.0 3.4 3.5 2.3 3.2 3.5 3.8 3.0 3.8 3.2 3.7 3.3 3.2 3.2 3.1 2.3 2.8 2.8 3.3
+ [58] 2.4 2.9 2.7 2.0 3.0 2.2 2.9 2.9 3.1 3.0 2.7 2.2 2.5 3.2 2.8 2.5 2.8 2.9 3.0
+ [77] 2.8 3.0 2.9 2.6 2.4 2.4 2.7 2.7 3.0 3.4 3.1 2.3 3.0 2.5 2.6 3.0 2.6 2.3 2.7
+ [96] 3.0 2.9 2.9 2.5 2.8 3.3 2.7 3.0 2.9 3.0 3.0 2.5 2.9 2.5 3.6 3.2 2.7 3.0 2.5
+[115] 2.8 3.2 3.0 3.8 2.6 2.2 3.2 2.8 2.8 2.7 3.3 3.2 2.8 3.0 2.8 3.0 2.8 3.8 2.8
+[134] 2.8 2.6 3.0 3.4 3.1 3.0 3.1 3.1 3.1 2.7 3.2 3.3 3.0 2.5 3.0 3.4 3.0
+> iris["Sepal.Width"]
+    Sepal.Width
+1           3.5
+2           3.0
+3           3.2
+4           3.1
+5           3.6
+6           3.9
+7           3.4
+8           3.4
+9           2.9
+10          3.1
+11          3.7
+12          3.4
+13          3.0
+14          3.0
+15          4.0
+16          4.4
+17          3.9
+18          3.5
+19          3.8
+20          3.8
+21          3.4
+22          3.7
+23          3.6
+24          3.3
+25          3.4
+26          3.0
+27          3.4
+28          3.5
+29          3.4
+30          3.2
+31          3.1
+32          3.4
+33          4.1
+34          4.2
+35          3.1
+36          3.2
+37          3.5
+38          3.6
+39          3.0
+40          3.4
+41          3.5
+42          2.3
+43          3.2
+44          3.5
+45          3.8
+46          3.0
+47          3.8
+48          3.2
+49          3.7
+50          3.3
+51          3.2
+52          3.2
+53          3.1
+54          2.3
+55          2.8
+56          2.8
+57          3.3
+58          2.4
+59          2.9
+60          2.7
+61          2.0
+62          3.0
+63          2.2
+64          2.9
+65          2.9
+66          3.1
+67          3.0
+68          2.7
+69          2.2
+70          2.5
+71          3.2
+72          2.8
+73          2.5
+74          2.8
+75          2.9
+76          3.0
+77          2.8
+78          3.0
+79          2.9
+80          2.6
+81          2.4
+82          2.4
+83          2.7
+84          2.7
+85          3.0
+86          3.4
+87          3.1
+88          2.3
+89          3.0
+90          2.5
+91          2.6
+92          3.0
+93          2.6
+94          2.3
+95          2.7
+96          3.0
+97          2.9
+98          2.9
+99          2.5
+100         2.8
+101         3.3
+102         2.7
+103         3.0
+104         2.9
+105         3.0
+106         3.0
+107         2.5
+108         2.9
+109         2.5
+110         3.6
+111         3.2
+112         2.7
+113         3.0
+114         2.5
+115         2.8
+116         3.2
+117         3.0
+118         3.8
+119         2.6
+120         2.2
+121         3.2
+122         2.8
+123         2.8
+124         2.7
+125         3.3
+126         3.2
+127         2.8
+128         3.0
+129         2.8
+130         3.0
+131         2.8
+132         3.8
+133         2.8
+134         2.8
+135         2.6
+136         3.0
+137         3.4
+138         3.1
+139         3.0
+140         3.1
+141         3.1
+142         3.1
+143         2.7
+144         3.2
+145         3.3
+146         3.0
+147         2.5
+148         3.0
+149         3.4
+150         3.0
+> 
+> mean(iris$Sepal.Width)
+[1] 3.057333
+> 
+> ##### 7.- VECTORES / LISTAS AVANZADOS
+> 
+> # Colecciones de variables
+> # Se parecen mucho a las data frames
+> # Tenemos unos genes asociados a tres grupos
+> 
+> geneset1<-c(1,4)
+> geneset2<-c(2,5,7,8)
+> geneset3<-c(1,5,6)
+> 
+> # Almacenamos los datos en una lista
+> genesets<-vector("list",3)
+> genesets[[1]]<-geneset1
+> genesets[[2]]<-geneset2
+> genesets[[3]]<-geneset3
+> genesets
+[[1]]
+[1] 1 4
+
+[[2]]
+[1] 2 5 7 8
+
+[[3]]
+[1] 1 5 6
+
+> 
+> # Ahora le ponemos nombre a los grupos
+> names(genesets)=paste0("set",1:3)
+> genesets
+$set1
+[1] 1 4
+
+$set2
+[1] 2 5 7 8
+
+$set3
+[1] 1 5 6
+
+> 
+> # Ahora nombramos a los genes
+> genenames=paste0("gene",1:10)
+> genesets[[1]]=genenames[geneset1]
+> genesets[[2]]=genenames[geneset2]
+> genesets[[3]]=genenames[geneset3]
+> genesets
+$set1
+[1] "gene1" "gene4"
+
+$set2
+[1] "gene2" "gene5" "gene7" "gene8"
+
+$set3
+[1] "gene1" "gene5" "gene6"
+
+> 
+> # Extraer elementos de la lista
+> genesets[1]
+$set1
+[1] "gene1" "gene4"
+
+> genesets[[1]]
+[1] "gene1" "gene4"
+> genesets[[1]][1]
+[1] "gene1"
+> unlist(genesets[1])[1]
+  set11 
+"gene1" 
+> length(genesets)
+[1] 3
+> length(genesets[[2]])
+[1] 4
+> 
+> # Crear una lista vacía
+> lista_vacia<-list()
+> lista_vacia <- c()
+> 
+> # Ahora con tres elementos
+> lista_vacia<-vector("list",length=3)
+> # Ahora la llenamos con un bucle
+> for(j in 1:3){
++ lista_vacia[[j]] <- c(1,2,3*j)
++ }
+> lista_vacia
+[[1]]
+[1] 1 2 3
+
+[[2]]
+[1] 1 2 6
+
+[[3]]
+[1] 1 2 9
+
+> 
+> # Añadir elementos. Para eso el data frame es lo mismo que la lista
+> lista_vacia[[4]] <- data.frame(x=c(8,5,3),y=c(7,9,1))
+> lista_vacia
+[[1]]
+[1] 1 2 3
+
+[[2]]
+[1] 1 2 6
+
+[[3]]
+[1] 1 2 9
+
+[[4]]
+  x y
+1 8 7
+2 5 9
+3 3 1
+
+> 
+> # Eliminar elementos
+> lista_vacia[[2]]<-NULL
+> #lista_vacia[-2] #equivalente
+> lista_vacia
+[[1]]
+[1] 1 2 3
+
+[[2]]
+[1] 1 2 9
+
+[[3]]
+  x y
+1 8 7
+2 5 9
+3 3 1
+
+> 
+> 
+> ##### 8.- CONDICIONALES: IF ELSE IFELSE
+> 
+> if(4 < 5) {"Verdadero"} else {"Falso"}
+[1] "Verdadero"
+> 
+> num <- 1:8
+> 
+> ifelse(num %% 2 == 0, "Par", "Non") # Forma comprimida, más dificil de entender
+[1] "Non" "Par" "Non" "Par" "Non" "Par" "Non" "Par"
+> 
+> ##### 9.- BUCLES-LOOPS
+> 
+> ### BUCLE FOR
+> 
+> dado <- 1:6
+> dado
+[1] 1 2 3 4 5 6
+> for(cara in dado) {
++   print(cara ^ 2)
++ }
+[1] 1
+[1] 4
+[1] 9
+[1] 16
+[1] 25
+[1] 36
+> 
+> mi_vector<-NULL
+> for(cara in dado) {
++   mi_vector[cara] <- cara ^ 2
++ }
+> mi_vector
+[1]  1  4  9 16 25 36
+> 
+> ### BUCLE WHILE
+> 
+> umbral <- 5
+> valor <- 0
+> 
+> while(valor < umbral) {
++   print("Todavía no.")
++   valor <- valor + 1
++ ### SALIDA DE BUCLES: BREAK Y NEXT
++ 
++ for(i in 1:10) {
++   if(i == 3) {
++     break
++   }
++   print(i)
++ }
++ 
++ numero <- 20
++ while(numero > 5) {
++   if(numero == 15) {
++     break
++   }
++   numero <- numero - 1
++ }
++ numero
++ 
++ for(i in 1:4) {
++   if(i == 3) {
++     next
++   }
++   print(i)
++ }
++ 
++ 
++ ##### 10.- FUNCIONES: APPLY y  LAPPLY
++ 
++ ### APPLY apply(x,margin,fun) 
++ # Margin, 1 es filas y 2 columnas. 
++ # Fun es la funcion que como requisito siempre tiene que admitir funciones
++ 
++ mi_df <- data.frame(v1 = 1:3, v2 = 4:6)
++ mi_df
++ 
++ # Coerción a matriz
++ mi_matriz <- as.matrix(mi_df)
++ mi_matriz
++ 
++ # Verificamos que sea matriz
++ is.matrix(mi_matriz)
++ class(mi_matriz)
++ mi_matriz
++ 
++ apply(mi_matriz,1,mean)
++ apply(mi_matriz,2,sum)
++ 
++ ### LAPPLY vale para listas lapply(x,fun)
++ 
++ trees[1:5,] #esta por defecto en R
++ lapply(trees,mean)
++ arboles <- lapply(X = trees, FUN = mean)
++ arboles
++ class(arboles)
++ 
++ # Podemos usar lapply en lugar de un bucle
++ mi_vector <- 6:12
++ mi_vector
++ resultado <- NULL
++ posicion <- 1
++ for(numero in mi_vector) {
++   resultado[posicion] <- sqrt(numero)
++   posicion <- posicion + 1
++ }
++ resultado
++ 
++ resultado <- NULL
++ resultado <- lapply(mi_vector, sqrt)
++ resultado
++ as.numeric(resultado)
++ 
++ ##### 10.- IMPORTAR Y EXPORTAR
++ 
++ # Exportar
++ write.csv(iris, "iris.csv", row.names = FALSE)
++ 
++ write.table(variable a guardar, "fichero.txt")
+Error: unexpected symbol in:
+"
+write.table(variable a"
+> 
+> # Importar
+> iris2 <- read.csv("iris.csv")
+> head(iris2)
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+5          5.0         3.6          1.4         0.2  setosa
+6          5.4         3.9          1.7         0.4  setosa
+> 
+> 
+> ##### 11.- GRAFICOS
+> 
+> # Para los colores que valen http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf
+> 
+> #### Histograma
+> hist(iris$Sepal.Length, main = "Histograma de Sepal Length",
++      col = "lightblue", xlab = "Longitud")
+> 
+> ### Dispersión
+> plot(iris$Petal.Length, iris$Petal.Width,
++      col = iris$Species, pch = 19,
++      main = "Relación pétalos", xlab = "Largo", ylab = "Ancho")
+> 
+> legend("topleft", legend = levels(iris$Species),
++        col = 1:3, pch = 19, title = "Especies")
+> 
+> ### GRÁFICO CIRCULAR
+> # Frecuencia de especies en iris
+> tabla_especies <- table(iris$Species)
+> pie(tabla_especies, col = c("red", "green", "blue"),
++     main = "Proporción de especies")
+> 
+> legend("topright", legend = names(tabla_especies),
++        fill = c("red", "green", "blue"))
+> 
+> # --- BOXPLOT ---
+> # Edad ficticia en "banco" → usamos iris para ejemplo
+> boxplot(Sepal.Length ~ Species, data = iris,
++         col = c("red", "green", "blue"),
++         main = "Distribución de Sepal.Length por especie",
++         xlab = "Especies", ylab = "Sepal Length")
+> 
+> #########################################################
+> # Con ggplot2 (versión moderna y más estética)
+> #########################################################
+> 
+> library(ggplot2)
+> 
+> # Histograma con leyenda
+> ggplot(iris, aes(x = Sepal.Length, fill = Species)) +
++   geom_histogram(position = "identity", alpha = 0.6, bins = 20) +
++   labs(title = "Histograma de Sepal Length", x = "Sepal Length") +
++   theme_minimal()
+> 
+> # Dispersión con leyenda automática
+> ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) +
++   geom_point(size = 3) +
++   labs(title = "Relación entre largo y ancho de pétalos") +
++   theme_minimal()
+> 
+> # Gráfico circular
+> ggplot(as.data.frame(tabla_especies), aes(x = "", y = Freq, fill = Var1)) +
++   geom_col() +
++   coord_polar(theta = "y") +
++   labs(title = "Proporción de especies", fill = "Especie") +
++   theme_void()
+> 
+> # Boxplot
+> ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
++   geom_boxplot() +
++   labs(title = "Distribución de Sepal.Length por especie") +
++   theme_minimal()
+> hist(iris$Sepal.Length, main = "Histograma de Sepal Length",
++      col = "lightblue", xlab = "Longitud")
+> 
+> 
+> Dispersión
+Error: objeto 'Dispersión' no encontrado
+> plot(iris$Petal.Length, iris$Petal.Width,
++      col = iris$Species, pch = 19,
++      main = "Relación pétalos", xlab = "Largo", ylab = "Ancho")
+> 
+> legend("topleft", legend = levels(iris$Species),
++        col = 1:3, pch = 19, title = "Especies")
+> 
+> 
+> tabla_especies <- table(iris$Species)
+> pie(tabla_especies, col = c("red", "green", "blue"),
++     main = "Proporción de especies")
+> 
+> legend("topright", legend = names(tabla_especies),
++        fill = c("red", "green", "blue"))
+> 
+> 
+> Edad ficticia en "banco" → usamos iris para ejemplo
+Error: unexpected symbol en "Edad ficticia"
+> boxplot(Sepal.Length ~ Species, data = iris,
++         col = c("red", "green", "blue"),
++         main = "Distribución de Sepal.Length por especie",
++         xlab = "Especies", ylab = "Sepal Length")
+> 
+> ggplot(iris, aes(x = Sepal.Length, fill = Species)) +
++   geom_histogram(position = "identity", alpha = 0.6, bins = 20) +
++   labs(title = "Histograma de Sepal Length", x = "Sepal Length") +
++   theme_minimal()
+> 
+> ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) +
++   geom_point(size = 3) +
++   labs(title = "Relación entre largo y ancho de pétalos") +
++   theme_minimal()
+> 
+> ggplot(as.data.frame(tabla_especies), aes(x = "", y = Freq, fill = Var1)) +
++   geom_col() +
++   coord_polar(theta = "y") +
++   labs(title = "Proporción de especies", fill = "Especie") +
++   theme_void()
+> 
+> 
+> ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
++   geom_boxplot() +
++   labs(title = "Distribución de Sepal.Length por especie") +
++   theme_minimal()
+> 
